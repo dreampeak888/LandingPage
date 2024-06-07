@@ -9,18 +9,8 @@ import {
   useDisclosure,
   Stack,
   useColorModeValue,
-  Avatar,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-  Center,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
-import { useRouter } from 'next/router';
-import type { User } from '@supabase/supabase-js';
-import { createClient } from '@/utils/supabase/component';
 
 const Links = ['About', 'Contact', 'Calendar'];
 
@@ -44,24 +34,9 @@ const NavLink: React.FC<{ children: React.ReactNode, href: string }> = ({ childr
   </Link>
 );
 
-interface NavbarProps {
-  user: User | null;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ user }) => {
+const LoggedNavbar: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
-  const supabase = createClient();
   const [scrolled, setScrolled] = useState(false);
-
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      router.push('/login'); // Redirect to login page after logout
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -107,37 +82,12 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
             </HStack>
           </HStack>
           <Flex alignItems={'center'}>
-            {user ? (
-              <Menu>
-                <MenuButton as={Button} rounded={'full'} variant={'link'} cursor={'pointer'} minW={0}>
-                  <Avatar size={'sm'} src={user.user_metadata.avatar_url || ''} />
-                </MenuButton>
-                <MenuList alignItems={'center'}>
-                  <br />
-                  <Center>
-                    <Avatar size={'2xl'} src={user.user_metadata.avatar_url || ''} />
-                  </Center>
-                  <br />
-                  <Center>
-                    <p>{user.email}</p>
-                  </Center>
-                  <br />
-                  <MenuDivider />
-                  <MenuItem>Your Profile</MenuItem>
-                  <MenuItem>Settings</MenuItem>
-                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                </MenuList>
-              </Menu>
-            ) : (
-              <>
-                <Button as={Link} href="/login" variant={'link'} mr={4} color={'gray.200'}>
-                  Login
-                </Button>
-                <Button as={Link} href="/register" bgColor={'black'} textColor={'gray.200'}>
-                  Register
-                </Button>
-              </>
-            )}
+            <Button as={Link} href="/login" variant={'link'} mr={4} color={'gray.200'}>
+              Login
+            </Button>
+            <Button as={Link} href="/register" bgColor={'black'} textColor={'gray.200'}>
+              Register
+            </Button>
           </Flex>
         </Flex>
 
@@ -155,4 +105,4 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   );
 };
 
-export default Navbar;
+export default LoggedNavbar;

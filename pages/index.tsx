@@ -5,6 +5,8 @@ import VideoHero from '@/components/Pages/HeroVideo';
 import Carousel from '@/components/Pages/Carousel';
 import Cuestionario from '@/components/Pages/Cuestionario';
 import Calendar from '@/components/Pages/Calendar';
+import { GetServerSidePropsContext } from 'next'
+import { createClient } from '@/utils/supabase/server-props'
 import About from '@/components/Pages/About';
 const Home: React.FC = () => {
   const photos = [
@@ -19,14 +21,14 @@ const Home: React.FC = () => {
       
           
       <VideoHero title={'Herovideo'} description={'descripcion'} videoSrc={'example.mp4'}/>
-      <Box bg={useColorModeValue('gray.100', 'gray.800')} py={24}>
+      <Box py={24}>
         <Cuestionario  />
       </Box>
       
       <Box py={0}>
       <Carousel />
       </Box>
-      <Box py={0}>
+      <Box py={0} >
       <About />
       </Box>
       
@@ -34,5 +36,25 @@ const Home: React.FC = () => {
     </Layout>
   );
 };
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const supabase = createClient(context)
+
+  const { data, error } = await supabase.auth.getUser()
+
+  if (error || !data) {
+    return {
+      props: {
+        user: null,
+      },
+    }
+  }
+
+  return {
+    props: {
+      user: data.user,
+    },
+  }
+}
 
 export default Home;

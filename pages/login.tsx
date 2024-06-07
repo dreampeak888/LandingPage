@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { Button, Flex, FormControl, FormLabel, Input, Heading, Text } from '@chakra-ui/react';
 import { createClient } from '@/utils/supabase/component';
 import MainLayout from '@/components/Tools/MainLayout';
+
+import { GetServerSidePropsContext } from 'next';
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -12,7 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
 
   async function logIn() {
-    const { error } = await supabase.auth.signIn({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setError(error.message);
       return;

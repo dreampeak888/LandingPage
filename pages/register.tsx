@@ -162,7 +162,7 @@ const Register: React.FC = () => {
   return (
     <>
  
-    <Layout>
+    <Layout user={null}>
         
         <RegisterForm/>
         

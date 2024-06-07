@@ -23,21 +23,17 @@ const VideoHero: React.FC<VideoHeroProps> = ({ title, description, videoSrc }) =
 
     return () => clearTimeout(timer);
   }, []); // Run only once on component mount
-
   const handleButtonClick = () => {
-    if (videoRef.current) {
-      const videoElement = videoRef.current;
+    const videoElement = document.querySelector('video') as HTMLVideoElement;
+  
+    if (videoElement) {
       if (videoElement.requestFullscreen) {
         videoElement.requestFullscreen();
-      } else if (videoElement.mozRequestFullScreen) { /* Firefox */
-        videoElement.mozRequestFullScreen();
-      } else if (videoElement.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-        videoElement.webkitRequestFullscreen();
-      } else if (videoElement.msRequestFullscreen) { /* IE/Edge */
-        videoElement.msRequestFullscreen();
+      } else {
+        console.error('Fullscreen API is not supported');
       }
     }
-  };
+  }
 
   return (
     <Box

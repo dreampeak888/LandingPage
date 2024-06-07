@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Box, Center, Flex, Heading, Text, useColorModeValue } from '@chakra-ui/react';
+import React, { useEffect, useRef } from 'react';
+import { Box, Center, Flex, Heading, Text, useColorModeValue, useMediaQuery } from '@chakra-ui/react';
 import { motion, useAnimation } from 'framer-motion';
 import Image from 'next/image';
+
 // Define the type for the course data
 interface Course {
   title: string;
@@ -74,73 +75,79 @@ const CourseCard: React.FC<CourseCardProps> = ({ title, description, image, link
       transition={{ duration: 0.5 }}
       style={{ width: '100%' }}
     >
-     <Box
-    width="auto"
-    height="auto"
-    borderWidth="1px"
-    borderRadius="lg"
-    overflow="hidden"
-    borderColor="gray.200"
-    shadow="md"
-    backgroundColor="gray.300"
-    _hover={{ boxShadow: '2xl' }}
-    p={0}
-  >
-    <Center>
-     
-        <Image
-          src={image}
-          alt={title}
-          width={1000}
-          height={400}
-          objectFit="cover"
-          layout="responsive"
-        />
-     
-    </Center>
-    <Center>
-      <Box p={4}>
-        <Heading size="md" as="h3" mb={2}>
-          {title}
-        </Heading>
-        <Text fontSize="sm">{description}</Text>
+      <Box
+        width="auto"
+        height="auto"
+        borderWidth="1px"
+        borderRadius="lg"
+        overflow="hidden"
+        borderColor="gray.200"
+        shadow="md"
+        backgroundColor="gray.300"
+        _hover={{ boxShadow: '2xl' }}
+        p={0}
+      >
+        <Center>
+          <Image
+            src={image}
+            alt={title}
+            width={1000}
+            height={400}
+            objectFit="cover"
+            layout="responsive"
+          />
+        </Center>
+        <Center>
+          <Box p={4}>
+            <Heading size="md" as="h3" mb={2}>
+              {title}
+            </Heading>
+            <Text fontSize="sm">{description}</Text>
+          </Box>
+        </Center>
       </Box>
-    </Center>
-  </Box>
-      
     </motion.div>
   );
 };
 
 const About: React.FC = () => {
+    const [isMobile] = useMediaQuery('(max-width: 325px)');
   const bg = useColorModeValue('gray.100', 'gray.800');
 
   return (
-    <Box bg={bg} p={8}>
+    <Box bg={bg} p={8} w={isMobile ? '160%': '100%'}>
       <Flex direction="column" alignItems="center">
         <Center>
-        <Heading as="h1" size="2xl" mb={4}>
-          Acerca de Nosotros
-        </Heading>
+          <Heading as="h1" size="2xl" mb={4}>
+            Acerca de Nosotros
+          </Heading>
         </Center>
         <Text mb={8}>
           En nuestro equipo de expertos en hiking, cada miembro comparte una pasión innegable por la naturaleza y la
           aventura al aire libre.
         </Text>
         <Flex
-         sx={{
-            '@media screen and (min-width: 768px)': {
-              flexDirection: 'column',
-             
-            },
-          }} // Switch direction to column on mobile devices
           alignItems="center"
           justifyContent="center"
           flexWrap="wrap"
           gap={6}
+          style={{
+            flexDirection: 'row',
+          }}
         >
           {courses.map((course, index) => (
-            <CourseCard key={index} {...course} />
+            <Box
+              key={index}
+              width={{ base: '100%', sm: '50%', md: '33.33%', lg: '25%' }}
+              p={2}
+              sx={{
+                '@media screen and (max-width: 315px)': {
+                  width: '100%',
+                },
+              }}
+            >
+              <CourseCard {...course} />
+            </Box>
           ))}
         </Flex>
       </Flex>
