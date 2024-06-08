@@ -6,7 +6,7 @@ import Carousel from '@/components/Pages/Carousel';
 import Cuestionario from '@/components/Pages/Cuestionario';
 import Calendar from '@/components/Pages/Calendar';
 import { GetServerSidePropsContext } from 'next'
-
+import { createClient } from '@/utils/supabase/server-props'
 import About from '@/components/Pages/About';
 const Home: React.FC = () => {
   const photos = [
