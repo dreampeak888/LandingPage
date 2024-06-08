@@ -24,7 +24,7 @@ const Register: React.FC = () => {
   const toast = useToast();
   const router = useRouter();
   const supabase = createClient(); // Initialize Supabase client
-
+  const [step, setStep] = useState(1);
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -34,6 +34,8 @@ const Register: React.FC = () => {
       otherNames: '',
       residency: '',
       activities: [] as string[],
+      phone: undefined,
+      birthdate: undefined
     },
     validationSchema: Yup.object({
       email: Yup.string().email('Invalid email address').required('Required'),
@@ -44,7 +46,10 @@ const Register: React.FC = () => {
       residency: Yup.string().required('Required'),
       activities: Yup.array().min(1, 'At least one activity must be selected'),
     }),
-    onSubmit: async (values: { email: any; password: any; name: any; firstName: any; otherNames: any; residency: any; activities: any; }) => {
+    onSubmit: async (values: {
+      birthdate: any;
+      phone: any; email: any; password: any; name: any; firstName: any; otherNames: any; residency: any; activities: any; 
+}) => {
       try {
         // Sign up user with email and password
         const { error } = await supabase.auth.signUp({
@@ -66,7 +71,9 @@ const Register: React.FC = () => {
               first_name: values.firstName,
               other_names: values.otherNames,
               residency: values.residency,
-              activities: values.activities
+              activities: values.activities,
+              phone: values.phone,
+              birthdate: values.birthdate,
             }]);
             
             toast({
@@ -90,7 +97,21 @@ const Register: React.FC = () => {
       }
     },
   });
+  const handleNext = () => {
+    if (formik.values.email && formik.values.password) {
+      setStep(2);
+    } else {
+      toast({
+        title: "Error",
+        description: "Please fill in the email and password fields",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
  function RegisterForm() {
+ 
     return (
       <div>
           <Container maxW="md" mt={1} mb={10} p={6} boxShadow="lg" borderRadius="md" bg="white">
@@ -98,62 +119,91 @@ const Register: React.FC = () => {
             Register
           </Heading>
           <Box as="form" onSubmit={formik.handleSubmit}>
-            <FormControl id="email" mb={4} >
-              <FormLabel>Email</FormLabel>
-              <Input type="email" {...formik.getFieldProps('email')} />
-            </FormControl>
-  
-            <FormControl id="password" mb={4} >
-              <FormLabel>Password</FormLabel>
-              <Input type="password" {...formik.getFieldProps('password')} />
-            </FormControl>
-  
-            <FormControl id="name" mb={4} >
-              <FormLabel>Name</FormLabel>
-              <Input type="text" {...formik.getFieldProps('name')} />
-            </FormControl>
-  
-            <FormControl id="firstName" mb={4} >
-              <FormLabel>First Name</FormLabel>
-              <Input type="text" {...formik.getFieldProps('firstName')} />
-            </FormControl>
-  
-            <FormControl id="otherNames" mb={4} >
-              <FormLabel>Other Names</FormLabel>
-              <Input type="text" {...formik.getFieldProps('otherNames')} />
-            </FormControl>
-  
-            <FormControl id="residency" mb={4} >
-              <FormLabel>Residency</FormLabel>
-              <Select placeholder="Select state" {...formik.getFieldProps('residency')}>
-                {mexicanStates.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-  
-            <FormControl id="activities" mb={4} >
-              <FormLabel>Activities</FormLabel>
-              <CheckboxGroup
+          {step === 1 && (
+            <>
+              <FormControl id="email" mb={4}>
+                <FormLabel>Email</FormLabel>
+                <Input required type="email" {...formik.getFieldProps('email')} />
+              </FormControl>
+
+              <FormControl id="password" mb={4}>
+                <FormLabel>Password</FormLabel>
+                <Input  type="password" {...formik.getFieldProps('password')} />
+              </FormControl>
+
+              <Button
                 colorScheme="teal"
-                {...formik.getFieldProps('activities')}
-                onChange={(val) => formik.setFieldValue('activities', val)}
+                width="full"
+                mt={4}
+                
+                onClick={handleNext}
               >
-                <Stack spacing={2}>
-                  {activities.map((activity) => (
-                    <Checkbox key={activity} value={activity}>
-                      {activity}
-                    </Checkbox>
+                Next
+              </Button>
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <FormControl id="name" mb={4}>
+                <FormLabel>Name</FormLabel>
+                <Input  required type="text" {...formik.getFieldProps('name')} />
+              </FormControl>
+
+              <FormControl id="primerApellido" mb={4}>
+                <FormLabel>Primer Apellido</FormLabel>
+                <Input  required type="text" {...formik.getFieldProps('primerApellido')} />
+              </FormControl>
+
+              <FormControl id="segundoApellido" mb={4}>
+                <FormLabel>Segundo Apellido</FormLabel>
+                <Input required type="text" {...formik.getFieldProps('segundoApellido')} />
+              </FormControl>
+
+              <FormControl id="birthdate" mb={4}>
+                <FormLabel>Birthdate</FormLabel>
+                <Input required type="date" {...formik.getFieldProps('birthdate')} />
+              </FormControl>
+
+              <FormControl id="phone" mb={4}>
+                <FormLabel>Phone</FormLabel>
+                <Input required type="text" {...formik.getFieldProps('phone')} />
+              </FormControl>
+
+              <FormControl id="estado" mb={4}>
+                <FormLabel>Estado</FormLabel>
+                <Select required placeholder="Select state" {...formik.getFieldProps('estado')}>
+                  {mexicanStates.map((state) => (
+                    <option key={state} value={state}>
+                      {state}
+                    </option>
                   ))}
-                </Stack>
-              </CheckboxGroup>
-            </FormControl>
-  
-            <Button type="submit" colorScheme="teal" width="full" mt={4}>
-              Register
-            </Button>
+                </Select>
+              </FormControl>
+
+              <FormControl id="activities" mb={4}>
+                <FormLabel >Actividades</FormLabel>
+                <CheckboxGroup
+                  colorScheme="teal"
+                  {...formik.getFieldProps('activities')}
+                  onChange={(val) => formik.setFieldValue('activities', val)}
+                 
+                >
+                  <Stack spacing={2}>
+                    {activities.map((activity) => (
+                      <Checkbox key={activity} value={activity}>
+                        {activity}
+                      </Checkbox>
+                    ))}
+                  </Stack>
+                </CheckboxGroup>
+              </FormControl>
+
+              <Button type="submit" colorScheme="teal" width="full" mt={4}>
+                Register
+              </Button>
+            </>
+          )}
           </Box>
         </Container>
       </div>
